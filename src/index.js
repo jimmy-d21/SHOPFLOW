@@ -1,4 +1,5 @@
 import express from "express";
+import { checkConnection } from "./config/db.js";
 
 const app = express();
 
@@ -8,6 +9,16 @@ app.get("/", (req, res) => {
 
 const PORT = 3000;
 
-app.listen(PORT, () => {
-  console.log(`Server is ready on PORT: ${PORT}`);
-});
+async function startServer() {
+  try {
+    await checkConnection();
+    app.listen(PORT, () => {
+      console.log(`Server is ready for PORT: ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();
